@@ -1,4 +1,5 @@
 import pandas as pd
+import datetime
 import matplotlib.pyplot as plt
 import numpy as np
 import obspy
@@ -25,20 +26,9 @@ if __name__ == "__main__":
     "sampling_rate": sampling_rate
   })
 
-  # Extact the start year and day from the first available timestamp
+  # Extract the start year and day from the first available timestamp
   timestamp = obspy.UTCDateTime(df["timestamp (s)"][0])
 
-  # Create the filename from the metadata
-  filename = ".".join([
-    header["network"],
-    header["station"],
-    header["location"],
-    header["channel"],
-    "D",
-    str(timestamp.year),
-    str(timestamp.julday)
-  ])
-  
   # Get the true sampling interval between the samples to identify gaps
   differences = np.diff(df["timestamp (s)"])
 
@@ -69,5 +59,26 @@ if __name__ == "__main__":
     # Set the start to the end of the previous trace
     start = end
   
-  # Write the stream to a mSEED file
-  st.write(filename, format="MSEED")
+  # Data is stored in daily files
+  start_date = obspy.UTCDateTime(st[0].stats.starttime.date)
+  end_date = obspy.UTCDateTime(st[-1].stats.starttime.date)
+
+  while(start_date <= end_date):
+
+    # Filename is network, station, location, channel, quality (D), year, day of year delimited by a period
+    filename = ".".join([
+      header["network"],
+      header["station"],
+      header["location"],
+      header["channel"],
+      "D",
+      start_date.strftime("%Y"),
+      start_date.strftime("%j")
+    ])
+
+    # Get the data beloning to a single day and write to file
+    st_day = st.slice(start_date, start_date + datetime.timedelta(days=1))
+    st_day.write(filename, format="MSEED")
+
+    # Increment the day
+    start_date += datetime.timedelta(days=1)
