@@ -11,10 +11,17 @@ if __name__ == "__main__":
   Author: Mathijs Koymans, 2020
   """
 
-  # Read the supplied AQG datafile to a dataframe
-  df = pd.read_csv("capture_20200826_170834_raw_13.csv", usecols=[0,6])
+  # Sampling interval tolerance (s)
+  EPSILON = 0.01
   # The AQG samples at 0.54 seconds instead of 2Hz
-  sampling_rate = 1. / 0.54 
+  SAMPLING_INT = 0.54
+
+  filename = "capture_20200826_170834_raw_13.csv"
+
+  print("Reading AQG input file %s." % filename)
+
+  # Read the supplied AQG datafile to a dataframe
+  df = pd.read_csv(filename, usecols=[0,6])
 
   # Define the mSEED header
   header = dict({
@@ -23,7 +30,7 @@ if __name__ == "__main__":
     "station": "AQG",
     "location": "",
     "channel": "MGZ",
-    "sampling_rate": sampling_rate
+    "sampling_rate": (1. / SAMPLING_INT)
   })
 
   # Extract the start year and day from the first available timestamp
@@ -33,7 +40,11 @@ if __name__ == "__main__":
   differences = np.diff(df["timestamp (s)"])
 
   # Check whether the sampling interval is within a tolerance: otherwise we create a new trace
-  indices = np.flatnonzero((differences < 0.530) | (differences > 0.550))
+  indices = np.flatnonzero(
+    (differences < (SAMPLING_INT - EPSILON)) |
+    (differences > (SAMPLING_INT + EPSILON))
+  )
+
   # Add one to split on the correct sample since np.diff reduced the index by one
   indices += 1
   
@@ -47,17 +58,35 @@ if __name__ == "__main__":
   start = 0
 
   # Add none to the final index to include the final trace
-  for end in list(indices) + [None]:
+  for end in list(indices):
+
+    print("Found gap in data outside of tolerance of length: %.3fs. Starting new trace." % differences[end - 1])
 
     # Set the start time of the trace equal to the first sample of the trace
     header["starttime"] = obspy.UTCDateTime(df["timestamp (s)"][start])
 
     # Get the slice between start & end and add it to the existing stream
     tr = obspy.Trace(data[start:end], header=header)
+
+    print("Adding trace [%s]." % tr)
+
+    # Report the mismatch
+    mismatch = obspy.UTCDateTime(df["timestamp (s)"][end - 1]) - tr.stats.endtime
+    print("The trace endtime mismatch is %.3fs." % np.abs(mismatch))
+
+    # Save the trace to the stream
     st.append(tr)
 
     # Set the start to the end of the previous trace
     start = end
+
+  # Append the remaining trace: wrap this in a function
+  header["starttime"] = obspy.UTCDateTime(df["timestamp (s)"][start])
+  tr = obspy.Trace(data[start:], header=header)
+  mismatch = obspy.UTCDateTime(df["timestamp (s)"][end - 1]) - tr.stats.endtime
+  print("Adding remaining trace [%s]." % tr)
+  print("The current trace endtime mismatch is %.3fs." % np.abs(mismatch))
+  st.append(tr)
   
   # Data is stored in daily files
   start_date = obspy.UTCDateTime(st[0].stats.starttime.date)
@@ -75,6 +104,8 @@ if __name__ == "__main__":
       start_date.strftime("%Y"),
       start_date.strftime("%j")
     ])
+
+    print("Writing mSEED output file to %s." % filename)
 
     # Get the data beloning to a single day and write to file
     st_day = st.slice(start_date, start_date + datetime.timedelta(days=1))
