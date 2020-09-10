@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FDSNStationXML xmlns="http://www.fdsn.org/xml/station/1" schemaVersion="1.0">
+  <Source>NEWTON-g Consortium</Source>
+  <Sender>NEWTON-g</Sender>
+  <Created>2020-09-10T09:17:46</Created>
+  <Network code="NG" startDate="2020-09-01T00:00:00" restrictedStatus="closed">
+    <Description>Netherlands Seismic and Acoustic Network</Description>
+    <Station code="AQG" startDate="2020-09-01T00:00:00" restrictedStatus="closed">
+      <Latitude>37.765890</Latitude>
+      <Longitude>15.016805</Longitude>
+      <Elevation>2920</Elevation>
+      <Site>
+        <Name>Pizzi Deneri, Volcanological Observatory (PDN)</Name>
+        <Country>Italy</Country>
+      </Site>
+      <CreationDate>2001-06-06T00:00:00</CreationDate>
+      <Channel code="MGZ" startDate="2020-09-01T00:00:00" restrictedStatus="closed" locationCode="">
+        <Latitude>37.765890</Latitude>
+        <Longitude>15.016805</Longitude>
+        <Elevation>2920</Elevation>
+        <Depth>0</Depth>
+        <Azimuth>0</Azimuth>
+        <Dip>-90</Dip>
+        <SampleRate>2</SampleRate>
+        <SampleRateRatio>
+          <NumberSamples>2</NumberSamples>
+          <NumberSeconds>1</NumberSeconds>
+        </SampleRateRatio>
+        <StorageFormat>Float64</StorageFormat>
+        <ClockDrift>0</ClockDrift>
+        <Sensor>
+          <Type>AQG-1</Type>
+          <Description>Muquans Absolute Quantum Gravimeter</Description>
+          <Model>AQG-1</Model>
+        </Sensor>
+        <DataLogger>
+          <Description></Description>
+        </DataLogger>
+        <Response>
+          <InstrumentSensitivity>
+            <Value>1E9</Value>
+            <Frequency>0</Frequency>
+            <InputUnits>
+              <Name>NM/S**2</Name>
+            </InputUnits>
+            <OutputUnits>
+              <Name>M/S**2</Name>
+            </OutputUnits>
+          </InstrumentSensitivity>
+          <Stage number="1">
+            <StageGain>
+              <Value>1E9</Value>
+              <Frequency>0</Frequency>
+            </StageGain>
+          </Stage>
+        </Response>
+      </Channel>
+    </Station>
+  </Network>
+</FDSNStationXML>
