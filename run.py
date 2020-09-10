@@ -11,7 +11,7 @@ if __name__ == "__main__":
   name = "raw_gravity"
 
   # Convert the input file to 
-  files = convert("capture_20200826_170834_raw_13.csv", "NG", "AQG", "", name)
+  files = convert("data/capture_20200826_170834_raw_13.csv", "NG", "AQG", "", name)
 
   for (filename, stream) in files:
 

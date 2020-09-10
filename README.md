@@ -23,4 +23,4 @@ The mSEED standard has four identifiers (ASCII, N bytes): network (2), station (
     NG.AQG..MGZ | 2020-09-08T04:52:35.656000Z - 2020-09-08T06:51:57.136000Z | 1.9 Hz, 13263 samples
     NG.AQG..MGZ | 2020-09-08T06:54:09.388000Z - 2020-09-08T07:10:12.748000Z | 1.9 Hz, 1785 samples
 
-![Example Stream](plot.png)
+![Example Stream](images/plot.png)

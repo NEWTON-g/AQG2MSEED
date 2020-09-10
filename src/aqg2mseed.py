@@ -52,9 +52,6 @@ def convert(filename, network, station, location, name):
   # The AQG samples at 0.54 seconds instead of 2Hz
   SAMPLING_INT = 0.54
 
-  # The input filename
-  filename = "capture_20200826_170834_raw_13.csv"
-
   # Map the requested data file
   (index, name, channel) = map_name(name)
 
