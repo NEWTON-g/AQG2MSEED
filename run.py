@@ -8,11 +8,22 @@ if __name__ == "__main__":
   """
 
   # Column to write to mSEED
-  name = "raw_gravity"
+  column = "raw_gravity"
+  # Network identifier (NEWTON-g), station identifier (AQG), and location ("")
+  network = "NG"
+  station = "AQG"
+  location = ""
 
-  # Convert the input file to 
-  files = convert("data/capture_20200826_170834_raw_13.csv", "NG", "AQG", "", name)
+  # Convert the input file to mSEED streams
+  files = convert(
+    "data/capture_20200826_170834_raw_13.csv",
+    network,
+    station,
+    location,
+    column
+  )
 
+  # Write the streams to files
   for (filename, stream) in files:
 
     print("Writing mSEED output file to %s." % filename)

@@ -1,6 +1,9 @@
 # Script to generate mSEED from AQG .csv file
 
-Modify the input file in the `convert.py` script. An example AQG input file is given: `capture_20200826_170834_raw_13.csv` written to `NG.AQG..MGZ.D.2020.252`.
+This script loads raw AQG data files and converts them to the seismological mSEED standard.
+
+## Usage
+Modify the input file in the `run.py` script. An example AQG input file is given: `capture_20200826_170834_raw_13.csv` that is written to `NG.AQG..MGZ.D.2020.252`.
 
 ## Specifics
 
