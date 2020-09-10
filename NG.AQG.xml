@@ -39,18 +39,18 @@
         <Response>
           <InstrumentSensitivity>
             <Value>1E9</Value>
-            <Frequency>0</Frequency>
+            <Frequency>1</Frequency>
             <InputUnits>
-              <Name>NM/S**2</Name>
+              <Name>M/S**2</Name>
             </InputUnits>
             <OutputUnits>
-              <Name>M/S**2</Name>
+              <Name>NM/S**2</Name>
             </OutputUnits>
           </InstrumentSensitivity>
           <Stage number="1">
             <StageGain>
               <Value>1E9</Value>
-              <Frequency>0</Frequency>
+              <Frequency>1</Frequency>
             </StageGain>
           </Stage>
         </Response>
