@@ -26,8 +26,8 @@ if __name__ == "__main__":
   location = ""
 
   # Paths
-  path = "/Users/koymans/Documents/phd/data/newtong/aqg/raw"
-  path2 = "/Users/koymans/Documents/phd/data/newtong/aqg/mseed"
+  path = "data"
+  path2 = "mseed"
 
   for file in os.listdir(path):
 

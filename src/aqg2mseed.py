@@ -18,24 +18,24 @@ def map_name(name):
 
   # Gravity codes
   if name == "raw_gravity":
-    return (6, "raw vertical gravity (nm/s^2)", "MGZ")
+    return ("raw vertical gravity (nm/s^2)", "MGZ")
   # Pressure codes
   elif name == "atmospheric_pressure":
-    return (16, "atmospheric pressure (hPa)", "MDO")
+    return ("atmospheric pressure (hPa)", "MDO")
 
   # Temperature codes
   elif name == "sensor_head_temperature":
-    return (17, "sensor head temperature (°C)", "MK1")
+    return ("sensor head temperature (°C)", "MK1")
   elif name == "vacuum_chamber_temperature":
-    return (18, "vacuum chamber temperature (°C)", "MK2")
+    return ("vacuum chamber temperature (°C)", "MK2")
   elif name == "tiltmeter_temperature":
-    return (19, "tiltmeter temperature (°C)", "MK3")
+    return ("tiltmeter temperature (°C)", "MK3")
 
   # Tilting is X, Y not North and East
   elif name == "x_tilt":
-    return (20, "X tilt (mrad)", "MA1")
+    return ("X tilt (mrad)", "MA1")
   elif name == "y_tilt":
-    return (21, "Y tilt (mrad)", "MA2")
+    return ("Y tilt (mrad)", "MA2")
 
   else:
     raise ValueError("Invalid field %s requested." % name)
@@ -84,51 +84,53 @@ def convert(filename, network, station, location, names, correct=False):
     st = obspy.Stream()
 
     # Map the requested data file
-    (index, name, channel) = map_name(name)
+    (column, channel) = map_name(name)
 
     # Define the mSEED header
-    # Sampling rate should be rounded.. floating point issues
+    # Sampling rate should be rounded to 6 decimals.. floating point issues
     header = dict({
       "starttime": None,
-      "network": "NG",
-      "station": "AQG",
-      "location": "",
+      "network": network,
+      "station": station,
+      "location": location,
       "channel": channel,
-      "sampling_rate": np.round((1. / SAMPLING_INT), 8)
+      "sampling_rate": np.round((1. / SAMPLING_INT), 6)
     })
 
     # Reference the data and convert to int64 for storage. mSEED cannot store long long (64-bit) integers.
     # Can we think of a clever trick? STEIM2 compression (factor 3) is available for integers, not for ints.
-    if name == "raw vertical gravity (nm/s^2)":
-      data = np.array(df[name], dtype="int64")
+    if name == "raw_gravity":
+      data = np.array(df[column], dtype="int64")
 
-    # Scale auxilliary ints to integer by multiplying by 1000 (this is corrected for in the metadata)
-    elif (name == "atmospheric pressure (hPa)" or
-          name == "sensor head temperature (°C)" or
-          name == "vacuum chamber temperature (°C)" or
-          name == "tiltmeter temperature (°C)" or
-          name == "X tilt (mrad)" or
-          name == "Y tilt (mrad)"):
-      data = np.array(1E3 * df[name], dtype="int32")
+    # Scale auxilliary ints to integer by multiplying by 1000 (this is corrected for in the sensor metadata)
+    elif name in ("atmospheric_pressure",
+                  "sensor_head_temperature",
+                  "vacuum_chamber_temperature",
+                  "tiltmeter_temperature",
+                  "x_tilt",
+                  "y_tilt"):
+      data = np.array(1E3 * df[column], dtype="int32")
+
+    else:
+      raise ValueError("Unknown column requested.")
 
     # Make delta gravity corrections if requested
-    if name == "raw vertical gravity (nm/s^2)" and correct:
-      data -= np.array(df["delta_g_quartz (nm/s^2)"], dtype="int64")
-      data -= np.array(df["delta_g_tilt (nm/s^2)"], dtype="int64")
-      data -= np.array(df["delta_g_pressure (nm/s^2)"], dtype="int64")
-      data -= np.array(df["delta_g_earth_tide (nm/s^2)"], dtype="int64")
-      data -= np.array(df["delta_g_ocean_loading (nm/s^2)"], dtype="int64")
-      data -= np.array(df["delta_g_polar (nm/s^2)"], dtype="int64")
-      data -= np.array(df["delta_g_syst (nm/s^2)"], dtype="int64")
-      data -= np.array(df["delta_g_height (nm/s^2)"], dtype="int64")
-      data -= np.array(df["delta_g_laser_polarization (nm/s^2)"], dtype="int64")
-
-    # Convert to float
-    data = data.astype("float64")
+    if name == "raw_gravity" and correct:
+      # Correct for all these columns!
+      for correction in ("delta_g_quartz (nm/s^2)",
+                         "delta_g_tilt (nm/s^2)",
+                         "delta_g_pressure (nm/s^2)",
+                         "delta_g_earth_tide (nm/s^2)",
+                         "delta_g_ocean_loading (nm/s^2)",
+                         "delta_g_polar (nm/s^2)",
+                         "delta_g_syst (nm/s^2)",
+                         "delta_g_height (nm/s^2)",
+                         "delta_g_laser_polarization (nm/s^2)"):
+        data -= np.array(df[correction], dtype="int64")
 
     # Calculate the bitwise xor of all gravity data samples as checksum
     # After writing to mSEED, we apply xor again and the result should come down to 0 
-    checksum = np.bitwise_xor.reduce(data.astype("int64"))
+    checksum = np.bitwise_xor.reduce(data)
 
     # Here we start collecting the pandas data frame in to continuous traces without gaps
     # The index of the first trace is naturally 0
@@ -144,7 +146,7 @@ def convert(filename, network, station, location, names, correct=False):
       header["starttime"] = obspy.UTCDateTime(timestamps[start])
 
       # Get the array slice between start & end and add it to the existing stream
-      tr = obspy.Trace(data[start:end], header=header)
+      tr = obspy.Trace(data[start:end].astype("float64"), header=header)
 
       print("Adding trace [%s]." % tr)
 
@@ -164,7 +166,7 @@ def convert(filename, network, station, location, names, correct=False):
     # Remember to append the remaining trace after the last gap
     # This does not happen automatically but is the same procedure as inside the while loop
     header["starttime"] = obspy.UTCDateTime(timestamps[start])
-    tr = obspy.Trace(data[start:], header=header)
+    tr = obspy.Trace(data[start:].astype("float64"), header=header)
     mismatch = obspy.UTCDateTime(timestamps[len(timestamps) - 1]) - tr.stats.endtime
     print("Adding remaining trace [%s]." % tr)
     print("The current trace endtime mismatch is %.3fs." % np.abs(mismatch))
@@ -186,6 +188,7 @@ def convert(filename, network, station, location, names, correct=False):
     print("Added a total of %d traces." % len(st))
     print("Adding traces to the respective day files.")
 
+    # One problem here is that if one day if spread in two files it overwrites the first file
     while(start_date <= end_date):
 
       # Filename is network, station, location, channel, quality (D), year, day of year delimited by a period
@@ -194,7 +197,7 @@ def convert(filename, network, station, location, names, correct=False):
         header["station"],
         header["location"],
         header["channel"],
-        "D",
+        "Q",
         start_date.strftime("%Y"),
         start_date.strftime("%j")
       ])
