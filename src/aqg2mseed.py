@@ -16,8 +16,8 @@ def map_name(name):
   Refer to the mSEED manual
   """
 
-  # Gravity codes
-  if name == "raw_gravity":
+  # Gravity codes: quality code will be different
+  if name == "raw_gravity" or name == "corrected_gravity":
     return ("raw vertical gravity (nm/s^2)", "MGZ")
   # Pressure codes
   elif name == "atmospheric_pressure":
@@ -40,7 +40,7 @@ def map_name(name):
   else:
     raise ValueError("Invalid field %s requested." % name)
 
-def convert(filename, network, station, location, names, correct=False):
+def convert(filename, network, station, location, names):
 
   """
   Script to convert AQG gravimeter data to mSEED using ObsPy
@@ -86,6 +86,8 @@ def convert(filename, network, station, location, names, correct=False):
     # Map the requested data file
     (column, channel) = map_name(name)
 
+    quality = "Q" if name == "corrected_gravity" else "D"
+
     # Define the mSEED header
     # Sampling rate should be rounded to 6 decimals.. floating point issues
     header = dict({
@@ -94,12 +96,13 @@ def convert(filename, network, station, location, names, correct=False):
       "station": station,
       "location": location,
       "channel": channel,
+      "mseed": {"dataquality": quality},
       "sampling_rate": np.round((1. / SAMPLING_INT), 6)
     })
 
     # Reference the data and convert to int64 for storage. mSEED cannot store long long (64-bit) integers.
     # Can we think of a clever trick? STEIM2 compression (factor 3) is available for integers, not for ints.
-    if name == "raw_gravity":
+    if name == "raw_gravity" or name == "corrected_gravity":
       data = np.array(df[column], dtype="int64")
 
     # Scale auxilliary ints to integer by multiplying by 1000 (this is corrected for in the sensor metadata)
@@ -115,7 +118,7 @@ def convert(filename, network, station, location, names, correct=False):
       raise ValueError("Unknown column requested.")
 
     # Make delta gravity corrections if requested
-    if name == "raw_gravity" and correct:
+    if name == "corrected_gravity":
       # Correct for all these columns!
       for correction in ("delta_g_quartz (nm/s^2)",
                          "delta_g_tilt (nm/s^2)",
@@ -193,18 +196,18 @@ def convert(filename, network, station, location, names, correct=False):
 
       # Filename is network, station, location, channel, quality (D), year, day of year delimited by a period
       filename = ".".join([
-        header["network"],
-        header["station"],
-        header["location"],
-        header["channel"],
-        "Q",
+        network,
+        station,
+        location,
+        channel,
+        quality,
         start_date.strftime("%Y"),
         start_date.strftime("%j")
       ])
 
       # Get the data beloning to a single day and write to the correct file
       st_day = st.slice(start_date, start_date + datetime.timedelta(days=1))
-      files.append((filename, channel, st_day))
+      files.append((filename, channel + "." + quality, st_day))
 
       # Increment the day
       start_date += datetime.timedelta(days=1)

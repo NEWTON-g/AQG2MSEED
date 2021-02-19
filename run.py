@@ -9,9 +9,10 @@ if __name__ == "__main__":
   Author: Mathijs Koymans, 2020
   """
 
-  # Columns to write to mSEED
+  # Columns to write to mSEED: each will be a channel
   columns = [
     "raw_gravity",
+    "corrected_gravity",
     "atmospheric_pressure",
     "sensor_head_temperature",
     "vacuum_chamber_temperature",
@@ -25,7 +26,7 @@ if __name__ == "__main__":
   station = "AQG"
   location = ""
 
-  # Paths
+  # Paths to (read, write) (from, to):
   path = "data"
   path2 = "mseed"
 
@@ -40,8 +41,7 @@ if __name__ == "__main__":
       network,
       station,
       location,
-      columns,
-      correct=True
+      columns
     )
 
     # Write the streams to files

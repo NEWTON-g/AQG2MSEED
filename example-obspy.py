@@ -13,13 +13,19 @@ if __name__ == "__main__":
   inventory = read_inventory("NG.AQG.xml")
 
   # Read gravity channel
-  grav = read("mseed/MGZ/NG.AQG..MGZ.D.2020.213")
+  grav = read("mseed/MGZ.D/NG.AQG..MGZ.D.2020.213")
+  print(grav[0].stats)
+  show(inventory, grav)
+
+  # Read gravity channel
+  grav = read("mseed/MGZ.Q/NG.AQG..MGZ.Q.2020.213")
+  print(grav[0].stats)
   show(inventory, grav)
 
   # Read temperature channel
-  temp = read("mseed/MK1/NG.AQG..MK1.D.2020.213")
+  temp = read("mseed/MK1.D/NG.AQG..MK1.D.2020.213")
   show(inventory, temp)
 
   # Read tilt channel
-  temp = read("mseed/MA1/NG.AQG..MA1.D.2020.213")
+  temp = read("mseed/MA1.D/NG.AQG..MA1.D.2020.213")
   show(inventory, temp)
