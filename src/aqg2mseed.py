@@ -97,21 +97,34 @@ def convert(filename, network, station, location, names, correct=False):
       "sampling_rate": np.round((1. / SAMPLING_INT), 8)
     })
 
-    # Reference the data and convert to float64 for storage. mSEED cannot store long long (64-bit) integers.
-    # Can we think of a clever trick? STEIM2 compression (factor 3) is available for integers, not for floats.
-    data = np.array(df[name], dtype="float64")
+    # Reference the data and convert to int64 for storage. mSEED cannot store long long (64-bit) integers.
+    # Can we think of a clever trick? STEIM2 compression (factor 3) is available for integers, not for ints.
+    if name == "raw vertical gravity (nm/s^2)":
+      data = np.array(df[name], dtype="int64")
+
+    # Scale auxilliary ints to integer by multiplying by 1000 (this is corrected for in the metadata)
+    elif (name == "atmospheric pressure (hPa)" or
+          name == "sensor head temperature (°C)" or
+          name == "vacuum chamber temperature (°C)" or
+          name == "tiltmeter temperature (°C)" or
+          name == "X tilt (mrad)" or
+          name == "Y tilt (mrad)"):
+      data = np.array(1E3 * df[name], dtype="int32")
 
     # Make delta gravity corrections if requested
-    if name == "raw_gravity" and correct:
-      data -= np.array(df["delta_g_quartz (nm/s^2)"], dtype="float64")
-      data -= np.array(df["delta_g_tilt (nm/s^2)"], dtype="float64")
-      data -= np.array(df["delta_g_pressure (nm/s^2)"], dtype="float64")
-      data -= np.array(df["delta_g_earth_tide (nm/s^2)"], dtype="float64")
-      data -= np.array(df["delta_g_ocean_loading (nm/s^2)"], dtype="float64")
-      data -= np.array(df["delta_g_polar (nm/s^2)"], dtype="float64")
-      data -= np.array(df["delta_g_syst (nm/s^2)"], dtype="float64")
-      data -= np.array(df["delta_g_height (nm/s^2)"], dtype="float64")
-      data -= np.array(df["delta_g_laser_polarization (nm/s^2)"], dtype="float64")
+    if name == "raw vertical gravity (nm/s^2)" and correct:
+      data -= np.array(df["delta_g_quartz (nm/s^2)"], dtype="int64")
+      data -= np.array(df["delta_g_tilt (nm/s^2)"], dtype="int64")
+      data -= np.array(df["delta_g_pressure (nm/s^2)"], dtype="int64")
+      data -= np.array(df["delta_g_earth_tide (nm/s^2)"], dtype="int64")
+      data -= np.array(df["delta_g_ocean_loading (nm/s^2)"], dtype="int64")
+      data -= np.array(df["delta_g_polar (nm/s^2)"], dtype="int64")
+      data -= np.array(df["delta_g_syst (nm/s^2)"], dtype="int64")
+      data -= np.array(df["delta_g_height (nm/s^2)"], dtype="int64")
+      data -= np.array(df["delta_g_laser_polarization (nm/s^2)"], dtype="int64")
+
+    # Convert to float
+    data = data.astype("float64")
 
     # Calculate the bitwise xor of all gravity data samples as checksum
     # After writing to mSEED, we apply xor again and the result should come down to 0 

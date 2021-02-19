@@ -14,6 +14,8 @@
         <Country>Italy</Country>
       </Site>
       <CreationDate>2001-06-06T00:00:00</CreationDate>
+
+      <!-- Gravity Channel -->
       <Channel code="MGZ" startDate="2020-09-01T00:00:00" restrictedStatus="closed" locationCode="">
         <Latitude>37.765890</Latitude>
         <Longitude>15.016805</Longitude>
@@ -55,6 +57,325 @@
           </Stage>
         </Response>
       </Channel>
+
+      <!-- Pressure Channel -->
+      <Channel code="MDO" startDate="2020-09-01T00:00:00" restrictedStatus="closed" locationCode="">
+        <Latitude>37.765890</Latitude>
+        <Longitude>15.016805</Longitude>
+        <Elevation>2920</Elevation>
+        <Depth>0</Depth>
+        <Azimuth>0</Azimuth>
+        <Dip>-90</Dip>
+        <SampleRate>2</SampleRate>
+        <SampleRateRatio>
+          <NumberSamples>2</NumberSamples>
+          <NumberSeconds>1</NumberSeconds>
+        </SampleRateRatio>
+        <StorageFormat>STEIM2</StorageFormat>
+        <ClockDrift>0</ClockDrift>
+        <Sensor>
+          <Type>AQG-1</Type>
+          <Description>Muquans Absolute Quantum Gravimeter</Description>
+          <Model>AQG-1</Model>
+        </Sensor>
+        <DataLogger>
+          <Description></Description>
+        </DataLogger>
+        <Response>
+          <InstrumentSensitivity>
+            <Value>1E5</Value>
+            <Frequency>1</Frequency>
+            <InputUnits>
+              <Name>PA</Name>
+              <Description>PRESSURE IN PASCAL</Description>
+            </InputUnits>
+            <OutputUnits>
+              <Name>COUNTS</Name>
+              <Description>DIGITAL COUNTS</Description>
+            </OutputUnits>
+          </InstrumentSensitivity>
+          <Stage number="1">
+           <InputUnits>
+              <Name>PA</Name>
+              <Description>PRESSURE IN PASCAL</Description>
+            </InputUnits>
+            <OutputUnits>
+              <Name>COUNTS</Name>
+              <Description>DIGITAL COUNTS</Description>
+            </OutputUnits>
+            <StageGain>
+              <Value>1E5</Value>
+              <Frequency>1</Frequency>
+            </StageGain>
+          </Stage>
+        </Response>
+      </Channel>
+
+      <!-- Sensor Head Temperature Channel -->
+      <Channel code="MK1" startDate="2020-07-01T00:00:00" restrictedStatus="closed" locationCode="">
+        <Latitude>37.765890</Latitude>
+        <Longitude>15.016805</Longitude>
+        <Elevation>2920</Elevation>
+        <Depth>0</Depth>
+        <Azimuth>0</Azimuth>
+        <Dip>-90</Dip>
+        <SampleRate>2</SampleRate>
+        <SampleRateRatio>
+          <NumberSamples>2</NumberSamples>
+          <NumberSeconds>1</NumberSeconds>
+        </SampleRateRatio>
+        <StorageFormat>STEIM2</StorageFormat>
+        <ClockDrift>0</ClockDrift>
+        <Sensor>
+          <Type>AQG-1</Type>
+          <Description>Muquans Absolute Quantum Gravimeter</Description>
+          <Model>AQG-1</Model>
+        </Sensor>
+        <DataLogger>
+          <Description></Description>
+        </DataLogger>
+        <Response>
+          <InstrumentSensitivity>
+            <Value>1E3</Value>
+            <Frequency>0</Frequency>
+            <InputUnits>
+              <Name>CELSIUS</Name>
+              <Description>temperature in degrees Celsius</Description>
+            </InputUnits>
+            <OutputUnits>
+              <Name>COUNTS</Name>
+              <Description>DIGITAL COUNTS</Description>
+            </OutputUnits>
+          </InstrumentSensitivity>
+          <Stage number="1">
+            <InputUnits>
+              <Name>CELSIUS</Name>
+              <Description>temperature in degrees Celsius</Description>
+            </InputUnits>
+            <OutputUnits>
+              <Name>COUNTS</Name>
+              <Description>DIGITAL COUNTS</Description>
+            </OutputUnits>
+            <StageGain>
+              <Value>1E3</Value>
+              <Frequency>0</Frequency>
+            </StageGain>
+          </Stage>
+        </Response>
+      </Channel>
+
+      <!-- Sensor Head Temperature Channel -->
+      <Channel code="MK2" startDate="2020-07-01T00:00:00" restrictedStatus="closed" locationCode="">
+        <Latitude>37.765890</Latitude>
+        <Longitude>15.016805</Longitude>
+        <Elevation>2920</Elevation>
+        <Depth>0</Depth>
+        <Azimuth>0</Azimuth>
+        <Dip>-90</Dip>
+        <SampleRate>2</SampleRate>
+        <SampleRateRatio>
+          <NumberSamples>2</NumberSamples>
+          <NumberSeconds>1</NumberSeconds>
+        </SampleRateRatio>
+        <StorageFormat>STEIM2</StorageFormat>
+        <ClockDrift>0</ClockDrift>
+        <Sensor>
+          <Type>AQG-1</Type>
+          <Description>Muquans Absolute Quantum Gravimeter</Description>
+          <Model>AQG-1</Model>
+        </Sensor>
+        <DataLogger>
+          <Description></Description>
+        </DataLogger>
+        <Response>
+          <InstrumentSensitivity>
+            <Value>1E3</Value>
+            <Frequency>0</Frequency>
+            <InputUnits>
+              <Name>CELSIUS</Name>
+              <Description>temperature in degrees Celsius</Description>
+            </InputUnits>
+            <OutputUnits>
+              <Name>COUNTS</Name>
+              <Description>DIGITAL COUNTS</Description>
+            </OutputUnits>
+          </InstrumentSensitivity>
+          <Stage number="1">
+            <InputUnits>
+              <Name>CELSIUS</Name>
+              <Description>temperature in degrees Celsius</Description>
+            </InputUnits>
+            <OutputUnits>
+              <Name>COUNTS</Name>
+              <Description>DIGITAL COUNTS</Description>
+            </OutputUnits>
+            <StageGain>
+              <Value>1E3</Value>
+              <Frequency>0</Frequency>
+            </StageGain>
+          </Stage>
+        </Response>
+      </Channel>
+
+      <!-- Sensor Head Temperature Channel -->
+      <Channel code="MK3" startDate="2020-07-01T00:00:00" restrictedStatus="closed" locationCode="">
+        <Latitude>37.765890</Latitude>
+        <Longitude>15.016805</Longitude>
+        <Elevation>2920</Elevation>
+        <Depth>0</Depth>
+        <Azimuth>0</Azimuth>
+        <Dip>-90</Dip>
+        <SampleRate>2</SampleRate>
+        <SampleRateRatio>
+          <NumberSamples>2</NumberSamples>
+          <NumberSeconds>1</NumberSeconds>
+        </SampleRateRatio>
+        <StorageFormat>STEIM2</StorageFormat>
+        <ClockDrift>0</ClockDrift>
+        <Sensor>
+          <Type>AQG-1</Type>
+          <Description>MUQUANS ABSOLUTE QUANTUM GRAVIMETER</Description>
+          <Model>AQG-1</Model>
+        </Sensor>
+        <DataLogger>
+          <Description></Description>
+        </DataLogger>
+        <Response>
+          <InstrumentSensitivity>
+            <Value>1E3</Value>
+            <Frequency>0</Frequency>
+            <InputUnits>
+              <Name>CELSIUS</Name>
+              <Description>TEMPERATURE IN DEGREES CELCIUS</Description>
+            </InputUnits>
+            <OutputUnits>
+              <Name>COUNTS</Name>
+              <Description>DIGITAL COUNTS</Description>
+            </OutputUnits>
+          </InstrumentSensitivity>
+          <Stage number="1">
+            <InputUnits>
+              <Name>CELSIUS</Name>
+              <Description>TEMPERATURE IN DEGREES CELCIUS</Description>
+            </InputUnits>
+            <OutputUnits>
+              <Name>COUNTS</Name>
+              <Description>DIGITAL COUNTS</Description>
+            </OutputUnits>
+            <StageGain>
+              <Value>1E3</Value>
+              <Frequency>0</Frequency>
+            </StageGain>
+          </Stage>
+        </Response>
+      </Channel>
+
+      <!-- Tilt X Channel -->
+      <Channel code="MA1" startDate="2020-07-01T00:00:00" restrictedStatus="closed" locationCode="">
+        <Latitude>37.765890</Latitude>
+        <Longitude>15.016805</Longitude>
+        <Elevation>2920</Elevation>
+        <Depth>0</Depth>
+        <Azimuth>0</Azimuth>
+        <Dip>-90</Dip>
+        <SampleRate>2</SampleRate>
+        <SampleRateRatio>
+          <NumberSamples>2</NumberSamples>
+          <NumberSeconds>1</NumberSeconds>
+        </SampleRateRatio>
+        <StorageFormat>STEIM2</StorageFormat>
+        <ClockDrift>0</ClockDrift>
+        <Sensor>
+          <Type>AQG-1</Type>
+          <Description>MUQUANS ABSOLUTE QUANTUM GRAVIMETER</Description>
+          <Model>AQG-1</Model>
+        </Sensor>
+        <DataLogger>
+          <Description></Description>
+        </DataLogger>
+        <Response>
+          <InstrumentSensitivity>
+            <Value>1E3</Value>
+            <Frequency>0</Frequency>
+            <InputUnits>
+              <Name>MRAD</Name>
+              <Description>TILT IN MILIRADIANS</Description>
+            </InputUnits>
+            <OutputUnits>
+              <Name>COUNTS</Name>
+              <Description>DIGITAL COUNTS</Description>
+            </OutputUnits>
+          </InstrumentSensitivity>
+          <Stage number="1">
+            <InputUnits>
+              <Name>MRAD</Name>
+              <Description>TILT IN MILIRADIANS</Description>
+            </InputUnits>
+            <OutputUnits>
+              <Name>COUNTS</Name>
+              <Description>DIGITAL COUNTS</Description>
+            </OutputUnits>
+            <StageGain>
+              <Value>1E3</Value>
+              <Frequency>0</Frequency>
+            </StageGain>
+          </Stage>
+        </Response>
+      </Channel>
+
+      <!-- Tilt Y Channel -->
+      <Channel code="MA2" startDate="2020-07-01T00:00:00" restrictedStatus="closed" locationCode="">
+        <Latitude>37.765890</Latitude>
+        <Longitude>15.016805</Longitude>
+        <Elevation>2920</Elevation>
+        <Depth>0</Depth>
+        <Azimuth>0</Azimuth>
+        <Dip>-90</Dip>
+        <SampleRate>2</SampleRate>
+        <SampleRateRatio>
+          <NumberSamples>2</NumberSamples>
+          <NumberSeconds>1</NumberSeconds>
+        </SampleRateRatio>
+        <StorageFormat>STEIM2</StorageFormat>
+        <ClockDrift>0</ClockDrift>
+        <Sensor>
+          <Type>AQG-1</Type>
+          <Description>MUQUANS ABSOLUTE QUANTUM GRAVIMETER</Description>
+          <Model>AQG-1</Model>
+        </Sensor>
+        <DataLogger>
+          <Description></Description>
+        </DataLogger> 
+        <Response>
+          <InstrumentSensitivity>
+            <Value>1E3</Value>
+            <Frequency>0</Frequency>
+            <InputUnits>
+              <Name>MRAD</Name>
+              <Description>TILT IN MILIRADIANS</Description>
+            </InputUnits>
+            <OutputUnits>
+              <Name>COUNTS</Name>
+              <Description>DIGITAL COUNTS</Description>
+            </OutputUnits>
+          </InstrumentSensitivity>
+          <Stage number="1">
+            <InputUnits>
+              <Name>MRAD</Name>
+              <Description>TILT IN MILIRADIANS</Description>
+            </InputUnits>
+            <OutputUnits>
+              <Name>COUNTS</Name>
+              <Description>DIGITAL COUNTS</Description>
+            </OutputUnits>
+            <StageGain>
+              <Value>1E3</Value>
+              <Frequency>0</Frequency>
+            </StageGain>
+          </Stage>
+        </Response>
+      </Channel>
+
     </Station>
   </Network>
 </FDSNStationXML>
