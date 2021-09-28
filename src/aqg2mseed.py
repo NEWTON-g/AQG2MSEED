@@ -1,7 +1,9 @@
 import pandas as pd
+import sys
 import datetime
 import numpy as np
 import obspy
+import scipy
 
 def map_name(name):
 
@@ -47,10 +49,10 @@ def convert(filename, network, station, location, names):
   Author: Mathijs Koymans, 2020
   """
 
-  # Sampling interval tolerance (s)
-  EPSILON = 0.01
   # The AQG samples at 0.54 seconds instead of 2Hz
-  SAMPLING_INT = 0.54
+  SAMPLING_INT = 2.0
+  # Offset to be able to use STEIM2 effectively (which is limited to 32-bit)
+  GRAV_OFFSET = 9793798890
 
   print("Reading AQG input file %s." % filename)
 
@@ -66,10 +68,7 @@ def convert(filename, network, station, location, names):
 
   # Check whether the sampling interval is within a tolerance: otherwise we create a reference
   # to the index where the gap is. We will use these indices to create individual traces.
-  indices = np.flatnonzero(
-    (differences < (SAMPLING_INT - EPSILON)) |
-    (differences > (SAMPLING_INT + EPSILON))
-  )
+  indices = np.flatnonzero(differences > SAMPLING_INT)
 
   # Add one to split on the correct sample since np.diff reduced the index by one
   indices += 1
@@ -97,7 +96,7 @@ def convert(filename, network, station, location, names):
       "location": location,
       "channel": channel,
       "mseed": {"dataquality": quality},
-      "sampling_rate": np.round((1. / SAMPLING_INT), 6)
+      "sampling_rate": SAMPLING_INT
     })
 
     # Reference the data and convert to int64 for storage. mSEED cannot store long long (64-bit) integers.
@@ -131,9 +130,12 @@ def convert(filename, network, station, location, names):
                          "delta_g_laser_polarization (nm/s^2)"):
         data -= np.array(df[correction], dtype="int64")
 
+    if name == "raw_gravity" or name == "corrected_gravity":
+      data -= GRAV_OFFSET
+
     # Calculate the bitwise xor of all gravity data samples as checksum
     # After writing to mSEED, we apply xor again and the result should come down to 0 
-    checksum = np.bitwise_xor.reduce(data)
+    #checksum = np.bitwise_xor.reduce(data)
 
     # Here we start collecting the pandas data frame in to continuous traces without gaps
     # The index of the first trace is naturally 0
@@ -148,8 +150,16 @@ def convert(filename, network, station, location, names):
       # Set the start time of the trace equal to the first sample of the trace
       header["starttime"] = obspy.UTCDateTime(timestamps[start])
 
+      thing = data[start:end]
+      timing = timestamps[start:end]
+      total_seconds = timestamps[end - 1] - timestamps[start]
+      x = timestamps[start] + 0.5 * np.arange(2 * int(total_seconds) + 1)
+      # Interpolate and resample
+      l1d = scipy.interpolate.interp1d(timing, thing)
+      interpd = l1d(x)
+       
       # Get the array slice between start & end and add it to the existing stream
-      tr = obspy.Trace(data[start:end].astype("float64"), header=header)
+      tr = obspy.Trace(interpd.astype("int32"), header=header)
 
       print("Adding trace [%s]." % tr)
 
@@ -158,7 +168,7 @@ def convert(filename, network, station, location, names):
       print("The trace endtime mismatch is %.3fs." % np.abs(mismatch))
 
       # XOR with the existing checksum: eventually this should reduce back to 0
-      checksum ^= np.bitwise_xor.reduce(tr.data.astype("int64"))
+      #checksum ^= np.bitwise_xor.reduce(tr.data.astype("int64"))
 
       # Save the trace to the stream
       st.append(tr)
@@ -169,18 +179,28 @@ def convert(filename, network, station, location, names):
     # Remember to append the remaining trace after the last gap
     # This does not happen automatically but is the same procedure as inside the while loop
     header["starttime"] = obspy.UTCDateTime(timestamps[start])
-    tr = obspy.Trace(data[start:].astype("float64"), header=header)
+
+    thing = data[start:]
+    timing = timestamps[start:]
+    total_seconds = timestamps.iloc[-1] - timestamps[start]
+    x = timestamps[start] + 0.5 * np.arange(2 * int(total_seconds) + 1)
+
+    # Interpolate and resample
+    l1d = scipy.interpolate.interp1d(timing, thing)
+    interpd = l1d(x)
+
+    tr = obspy.Trace(interpd.astype("int32"), header=header)
     mismatch = obspy.UTCDateTime(timestamps[len(timestamps) - 1]) - tr.stats.endtime
     print("Adding remaining trace [%s]." % tr)
     print("The current trace endtime mismatch is %.3fs." % np.abs(mismatch))
     st.append(tr)
 
     # Add the checksum of the final trace
-    checksum ^= np.bitwise_xor.reduce(tr.data.astype("int64"))
+    #checksum ^= np.bitwise_xor.reduce(tr.data.astype("int64"))
     
     # Confirm that the checksum is zero and therefore correct
-    if checksum != 0:
-      raise AssertionError("Data xor checksum is incorrect! Not all samples were written correctly.")
+    #if checksum != 0:
+    #  raise AssertionError("Data xor checksum is incorrect! Not all samples were written correctly.")
 
     # Here we will sort the streams
     # Seismological data is conventionally stored in daily files
