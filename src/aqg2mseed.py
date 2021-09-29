@@ -42,6 +42,28 @@ def map_name(name):
   else:
     raise ValueError("Invalid field %s requested." % name)
 
+def resample(timestamps, data, start, end):
+
+  """
+  def resample
+  Resamples the data at 2Hz
+  """
+
+  thing = data[start:end]
+  timing = timestamps[start:end]
+
+  # Interpolate the AQG data
+  l1d = scipy.interpolate.interp1d(timing, thing, kind="linear")
+
+  total_samples = int((timestamps.iloc[(end or 0) - 1] - timestamps[start]) / 0.5)
+
+  # New time series to interpolate
+  x = timestamps[start] + 0.5 * np.arange(total_samples + 1)
+
+  # Interpolate and resample
+  return l1d(x)
+
+
 def convert(filename, network, station, location, names):
 
   """
@@ -58,10 +80,10 @@ def convert(filename, network, station, location, names):
 
   # Read the supplied AQG datafile to a dataframe.
   # We use the timestamp (0) and the requested column index (see map_name)
-  df = pd.read_csv(filename)
+  df = pd.read_csv(filename, parse_dates=[0])
 
   # Reference the timestamp for convenience 
-  timestamps = df["timestamp (s)"]
+  timestamps = df["timestamp (s)"].astype("float64")
 
   # Get the true sampling interval between the samples to identify gaps
   differences = np.diff(timestamps)
@@ -130,12 +152,9 @@ def convert(filename, network, station, location, names):
                          "delta_g_laser_polarization (nm/s^2)"):
         data -= np.array(df[correction], dtype="int64")
 
+    # Eliminate constant offset to make it fit within 32 bits
     if name == "raw_gravity" or name == "corrected_gravity":
       data -= GRAV_OFFSET
-
-    # Calculate the bitwise xor of all gravity data samples as checksum
-    # After writing to mSEED, we apply xor again and the result should come down to 0 
-    #checksum = np.bitwise_xor.reduce(data)
 
     # Here we start collecting the pandas data frame in to continuous traces without gaps
     # The index of the first trace is naturally 0
@@ -150,14 +169,8 @@ def convert(filename, network, station, location, names):
       # Set the start time of the trace equal to the first sample of the trace
       header["starttime"] = obspy.UTCDateTime(timestamps[start])
 
-      thing = data[start:end]
-      timing = timestamps[start:end]
-      total_seconds = timestamps[end - 1] - timestamps[start]
-      x = timestamps[start] + 0.5 * np.arange(2 * int(total_seconds) + 1)
-      # Interpolate and resample
-      l1d = scipy.interpolate.interp1d(timing, thing)
-      interpd = l1d(x)
-       
+      interpd = resample(timestamps, data, start, end)
+
       # Get the array slice between start & end and add it to the existing stream
       tr = obspy.Trace(interpd.astype("int32"), header=header)
 
@@ -166,9 +179,6 @@ def convert(filename, network, station, location, names):
       # Report the timing mismatch due to irregular sampling
       mismatch = obspy.UTCDateTime(timestamps[end - 1]) - tr.stats.endtime
       print("The trace endtime mismatch is %.3fs." % np.abs(mismatch))
-
-      # XOR with the existing checksum: eventually this should reduce back to 0
-      #checksum ^= np.bitwise_xor.reduce(tr.data.astype("int64"))
 
       # Save the trace to the stream
       st.append(tr)
@@ -180,27 +190,13 @@ def convert(filename, network, station, location, names):
     # This does not happen automatically but is the same procedure as inside the while loop
     header["starttime"] = obspy.UTCDateTime(timestamps[start])
 
-    thing = data[start:]
-    timing = timestamps[start:]
-    total_seconds = timestamps.iloc[-1] - timestamps[start]
-    x = timestamps[start] + 0.5 * np.arange(2 * int(total_seconds) + 1)
-
-    # Interpolate and resample
-    l1d = scipy.interpolate.interp1d(timing, thing)
-    interpd = l1d(x)
+    interpd = resample(timestamps, data, start, None)
 
     tr = obspy.Trace(interpd.astype("int32"), header=header)
-    mismatch = obspy.UTCDateTime(timestamps[len(timestamps) - 1]) - tr.stats.endtime
+    mismatch = obspy.UTCDateTime(timestamps.iloc[-1]) - tr.stats.endtime
     print("Adding remaining trace [%s]." % tr)
     print("The current trace endtime mismatch is %.3fs." % np.abs(mismatch))
     st.append(tr)
-
-    # Add the checksum of the final trace
-    #checksum ^= np.bitwise_xor.reduce(tr.data.astype("int64"))
-    
-    # Confirm that the checksum is zero and therefore correct
-    #if checksum != 0:
-    #  raise AssertionError("Data xor checksum is incorrect! Not all samples were written correctly.")
 
     # Here we will sort the streams
     # Seismological data is conventionally stored in daily files
