@@ -10,22 +10,17 @@ def show(inventory, stream):
 if __name__ == "__main__":
 
   # Metadata
-  inventory = read_inventory("NG.AQG.xml")
+  inventory = read_inventory("2Q.AQG.xml")
 
   # Read gravity channel
-  grav = read("mseed/MGZ.D/NG.AQG..MGZ.D.2020.213")
-  print(grav[0].stats)
-  show(inventory, grav)
-
-  # Read gravity channel
-  grav = read("mseed/MGZ.Q/NG.AQG..MGZ.Q.2020.213")
+  grav = read("mseed/MGZ.D/2Q.AQG..MGZ.D.2021.215")
   print(grav[0].stats)
   show(inventory, grav)
 
   # Read temperature channel
-  temp = read("mseed/MK1.D/NG.AQG..MK1.D.2020.213")
+  temp = read("mseed/MK1.D/2Q.AQG..MK1.D.2021.215")
   show(inventory, temp)
 
   # Read tilt channel
-  temp = read("mseed/MA1.D/NG.AQG..MA1.D.2020.213")
+  temp = read("mseed/MA1.D/2Q.AQG..MA1.D.2021.215")
   show(inventory, temp)

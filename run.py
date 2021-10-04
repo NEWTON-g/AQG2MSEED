@@ -1,6 +1,6 @@
 import os
 
-from src.aqg2mseed import convert
+from src.aqg2mseed import AQG2MSEED
 
 if __name__ == "__main__":
 
@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
   # Columns to write to mSEED: each will be a channel
   columns = [
-    "raw_gravity",
+    "gravity",
     "atmospheric_pressure",
     "sensor_head_temperature",
     "vacuum_chamber_temperature",
@@ -21,10 +21,9 @@ if __name__ == "__main__":
     "y_tilt"
   ]
 
-  # Network identifier (NEWTON-g), station identifier (AQG), and location ("")
-  network = "2Q"
-  station = "AQG"
-  location = ""
+  # These are the SEED network, station identifiers. Location remains blank.
+  # See https://www.fdsn.org/networks/detail/2Q_2020/
+  convertor = AQG2MSEED("2Q", "AQG", "")
 
   # Paths to (read, write) (from, to):
   path = "data"
@@ -36,13 +35,7 @@ if __name__ == "__main__":
 
     # Convert the input file to mSEED streams
     # Pass correct to add all gravity corrections
-    files = convert(
-      filepath,
-      network,
-      station,
-      location,
-      columns
-    )
+    files = convertor.convert(filepath, columns)
 
     # Write the streams to files
     for (filename, channel, stream) in files:
