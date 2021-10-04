@@ -12,17 +12,17 @@ if __name__ == "__main__":
   # Columns to write to mSEED: each will be a channel
   columns = [
     "raw_gravity",
-    "corrected_gravity",
     "atmospheric_pressure",
     "sensor_head_temperature",
     "vacuum_chamber_temperature",
     "tiltmeter_temperature",
+    "external_temperature",
     "x_tilt",
     "y_tilt"
   ]
 
   # Network identifier (NEWTON-g), station identifier (AQG), and location ("")
-  network = "NG"
+  network = "2Q"
   station = "AQG"
   location = ""
 

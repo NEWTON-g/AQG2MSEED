@@ -20,49 +20,29 @@ def map_name(name):
 
   # Gravity codes: quality code will be different
   if name == "raw_gravity" or name == "corrected_gravity":
-    return ("raw vertical gravity (nm/s^2)", "MGZ")
+    return (1E1, "raw vertical gravity (nm/s^2)", "MGZ")
   # Pressure codes
   elif name == "atmospheric_pressure":
-    return ("atmospheric pressure (hPa)", "MDO")
+    return (1E3, "atmospheric pressure (hPa)", "MDO")
 
   # Temperature codes
   elif name == "sensor_head_temperature":
-    return ("sensor head temperature (°C)", "MK1")
+    return (1E3, "sensor head temperature (°C)", "MK1")
   elif name == "vacuum_chamber_temperature":
-    return ("vacuum chamber temperature (°C)", "MK2")
+    return (1E3, "vacuum chamber temperature (°C)", "MK2")
   elif name == "tiltmeter_temperature":
-    return ("tiltmeter temperature (°C)", "MK3")
+    return (1E3, "tiltmeter temperature (°C)", "MK3")
+  elif name == "external_temperature":
+    return (1E3, "external temperature (°C)", "MK4")
 
   # Tilting is X, Y not North and East
   elif name == "x_tilt":
-    return ("X tilt (mrad)", "MA1")
+    return (1E3, "X tilt (mrad)", "MA1")
   elif name == "y_tilt":
-    return ("Y tilt (mrad)", "MA2")
+    return (1E3, "Y tilt (mrad)", "MA2")
 
   else:
     raise ValueError("Invalid field %s requested." % name)
-
-def resample(timestamps, data, start, end):
-
-  """
-  def resample
-  Resamples the data at 2Hz
-  """
-
-  thing = data[start:end]
-  timing = timestamps[start:end]
-
-  # Interpolate the AQG data
-  l1d = scipy.interpolate.interp1d(timing, thing, kind="linear")
-
-  total_samples = int((timestamps.iloc[(end or 0) - 1] - timestamps[start]) / 0.5)
-
-  # New time series to interpolate
-  x = timestamps[start] + 0.5 * np.arange(total_samples + 1)
-
-  # Interpolate and resample
-  return l1d(x)
-
 
 def convert(filename, network, station, location, names):
 
@@ -71,9 +51,9 @@ def convert(filename, network, station, location, names):
   Author: Mathijs Koymans, 2020
   """
 
-  # The AQG samples at 0.54 seconds instead of 2Hz
-  SAMPLING_INT = 2.0
-  # Offset to be able to use STEIM2 effectively (which is limited to 32-bit)
+  # The AQG samples precisely at 540ms
+  SAMPLING_INT = 1./0.540
+  # Offset to be able to use STEIM2 effectively (which is limited to 32-bit differences)
   GRAV_OFFSET = 9793798890
 
   print("Reading AQG input file %s." % filename)
@@ -105,7 +85,7 @@ def convert(filename, network, station, location, names):
     st = obspy.Stream()
 
     # Map the requested data file
-    (column, channel) = map_name(name)
+    (gain, column, channel) = map_name(name)
 
     quality = "Q" if name == "corrected_gravity" else "D"
 
@@ -131,9 +111,10 @@ def convert(filename, network, station, location, names):
                   "sensor_head_temperature",
                   "vacuum_chamber_temperature",
                   "tiltmeter_temperature",
+                  "external_temperature",
                   "x_tilt",
                   "y_tilt"):
-      data = np.array(1E3 * df[column], dtype="int32")
+      data = np.array(gain * df[column], dtype="int32")
 
     else:
       raise ValueError("Unknown column requested.")
@@ -169,10 +150,8 @@ def convert(filename, network, station, location, names):
       # Set the start time of the trace equal to the first sample of the trace
       header["starttime"] = obspy.UTCDateTime(timestamps[start])
 
-      interpd = resample(timestamps, data, start, end)
-
       # Get the array slice between start & end and add it to the existing stream
-      tr = obspy.Trace(interpd.astype("int32"), header=header)
+      tr = obspy.Trace(data[start:end].astype("int32"), header=header)
 
       print("Adding trace [%s]." % tr)
 
@@ -190,9 +169,7 @@ def convert(filename, network, station, location, names):
     # This does not happen automatically but is the same procedure as inside the while loop
     header["starttime"] = obspy.UTCDateTime(timestamps[start])
 
-    interpd = resample(timestamps, data, start, None)
-
-    tr = obspy.Trace(interpd.astype("int32"), header=header)
+    tr = obspy.Trace(data[start:end].astype("int32"), header=header)
     mismatch = obspy.UTCDateTime(timestamps.iloc[-1]) - tr.stats.endtime
     print("Adding remaining trace [%s]." % tr)
     print("The current trace endtime mismatch is %.3fs." % np.abs(mismatch))
