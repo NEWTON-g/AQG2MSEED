@@ -3,7 +3,7 @@
   <Source>NEWTON-g Consortium</Source>
   <Sender>NEWTON-g</Sender>
   <Created>2020-07-10T09:17:46</Created>
-  <Network code="NG" startDate="2020-07-01T00:00:00" restrictedStatus="closed">
+  <Network code="2Q" startDate="2020-07-01T00:00:00" restrictedStatus="closed">
     <Description>Netherlands Seismic and Acoustic Network</Description>
     <Station code="AQG" startDate="2020-07-01T00:00:00" restrictedStatus="closed">
       <Latitude>37.765890</Latitude>
@@ -194,6 +194,50 @@
 
       <!-- Sensor Head Temperature Channel -->
       <Channel code="MK3" startDate="2020-07-01T00:00:00" restrictedStatus="closed" locationCode="">
+        <Latitude>37.765890</Latitude>
+        <Longitude>15.016805</Longitude>
+        <Elevation>2920</Elevation>
+        <Depth>0</Depth>
+        <Azimuth>0</Azimuth>
+        <Dip>-90</Dip>
+        <SampleRate>2</SampleRate>
+        <SampleRateRatio>
+          <NumberSamples>2</NumberSamples>
+          <NumberSeconds>1</NumberSeconds>
+        </SampleRateRatio>
+        <ClockDrift>0</ClockDrift>
+        <Sensor>
+          <Type>AQG-1</Type>
+          <Description>MUQUANS ABSOLUTE QUANTUM GRAVIMETER</Description>
+          <Model>AQG-1</Model>
+        </Sensor>
+        <DataLogger>
+          <Description></Description>
+        </DataLogger>
+        <Response>
+          <InstrumentSensitivity>
+            <Value>1E3</Value>
+            <Frequency>0</Frequency>
+            <InputUnits>
+              <Name>CELSIUS</Name>
+              <Description>TEMPERATURE IN DEGREES CELCIUS</Description>
+            </InputUnits>
+            <OutputUnits>
+              <Name>COUNTS</Name>
+              <Description>DIGITAL COUNTS</Description>
+            </OutputUnits>
+          </InstrumentSensitivity>
+          <Stage number="1">
+            <StageGain>
+              <Value>1E3</Value>
+              <Frequency>0</Frequency>
+            </StageGain>
+          </Stage>
+        </Response>
+      </Channel>
+
+      <!-- External Temperature Channel -->
+      <Channel code="MK4" startDate="2020-07-01T00:00:00" restrictedStatus="closed" locationCode="">
         <Latitude>37.765890</Latitude>
         <Longitude>15.016805</Longitude>
         <Elevation>2920</Elevation>
