@@ -14,7 +14,6 @@ if __name__ == "__main__":
 
   # Read gravity channel
   grav = read("mseed/MGZ.D/2Q.AQG..MGZ.D.2021.215")
-  print(grav[0].stats)
   show(inventory, grav)
 
   # Read temperature channel

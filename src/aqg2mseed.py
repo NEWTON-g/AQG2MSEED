@@ -129,11 +129,10 @@ class AQG2MSEED():
     """
 
     # Apply all these corrections
+    # We avoid these corrections: delta_g_earth_tide (nm/s^2), delta_g_ocean_loading (nm/s^2) , delta_g_polar (nm/s^2)
     for correction in ("delta_g_quartz (nm/s^2)",
                        "delta_g_tilt (nm/s^2)",
                        "delta_g_pressure (nm/s^2)",
-                       "delta_g_ocean_loading (nm/s^2)",
-                       "delta_g_polar (nm/s^2)",
                        "delta_g_syst (nm/s^2)",
                        "delta_g_height (nm/s^2)",
                        "delta_g_laser_polarization (nm/s^2)"):
@@ -227,7 +226,7 @@ class AQG2MSEED():
       if name == "gravity":
 
         # All sorts of corrections
-        if False:
+        if True:
           self.correct_data(df, data)
 
         # Subtract an offset to keep values in 32-bit range
