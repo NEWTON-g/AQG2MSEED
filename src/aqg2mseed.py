@@ -1,9 +1,7 @@
-import pandas as pd
-import sys
 import datetime
 import numpy as np
 import obspy
-import scipy
+import pandas as pd
 
 class AQG2MSEED():
 
@@ -51,7 +49,7 @@ class AQG2MSEED():
       "location": self.location,
       "channel": channel,
       "mseed": {"dataquality": self.QUALITY},
-      "sampling_rate": (1. / self.SAMPLING_INT)
+      "sampling_rate": np.round(1. / self.SAMPLING_INT, decimals=9)
     })
 
 
@@ -69,27 +67,27 @@ class AQG2MSEED():
     """
   
     # Gravity codes: quality code will be different
-    if name == "gravity":
-      return (1E0, "raw vertical gravity (nm/s^2)", "MGZ")
+    if name == "raw vertical gravity (nm/s^2)":
+      return (1E0, "MGZ")
     # Pressure codes
-    elif name == "atmospheric_pressure":
-      return (1E3, "atmospheric pressure (hPa)", "MDO")
+    elif name == "atmospheric pressure (hPa)":
+      return (1E3, "MDO")
   
     # Temperature codes
-    elif name == "sensor_head_temperature":
-      return (1E3, "sensor head temperature (°C)", "MK1")
-    elif name == "vacuum_chamber_temperature":
-      return (1E3, "vacuum chamber temperature (°C)", "MK2")
-    elif name == "tiltmeter_temperature":
-      return (1E3, "tiltmeter temperature (°C)", "MK3")
-    elif name == "external_temperature":
-      return (1E3, "external temperature (°C)", "MK4")
+    elif name == "sensor head temperature (°C)":
+      return (1E3, "MK1")
+    elif name == "vacuum chamber temperature (°C)":
+      return (1E3, "MK2")
+    elif name == "tiltmeter temperature (°C)":
+      return (1E3, "MK3")
+    elif name == "external temperature (°C)":
+      return (1E3, "MK4")
   
     # Tilting is X, Y not North and East
-    elif name == "x_tilt":
-      return (1E3, "X tilt (mrad)", "MA1")
-    elif name == "y_tilt":
-      return (1E3, "Y tilt (mrad)", "MA2")
+    elif name == "X tilt (mrad)":
+      return (1E3, "MA1")
+    elif name == "Y tilt (mrad)":
+      return (1E3, "MA2")
   
     else:
       raise ValueError("Invalid field %s requested." % name)
@@ -132,6 +130,9 @@ class AQG2MSEED():
     # We avoid these corrections: delta_g_earth_tide (nm/s^2), delta_g_ocean_loading (nm/s^2) , delta_g_polar (nm/s^2)
     for correction in ("delta_g_quartz (nm/s^2)",
                        "delta_g_tilt (nm/s^2)",
+                       "delta_g_earth_tide (nm/s^2)",
+                       "delta_g_ocean_loading (nm/s^2)",
+                       "delta_g_polar (nm/s^2)",
                        "delta_g_pressure (nm/s^2)",
                        "delta_g_syst (nm/s^2)",
                        "delta_g_height (nm/s^2)",
@@ -179,76 +180,81 @@ class AQG2MSEED():
 
   def get_continuous_traces(self, timestamps):
 
-      # Get the true sampling interval between the samples to identify gaps
-      differences = np.diff(timestamps)
+    """
+    def AQG2MSEED.get_continuous_traces
+    Returns the indices of all end points of the continuous traces
+    """
 
-      # Check whether the sampling interval is within a tolerance: otherwise we create a reference
-      # to the index where the gap is. We will use these indices to create individual traces.
-      indices = np.flatnonzero(
-        (differences > (self.SAMPLING_INT + self.EPSILON)) |
-        (differences < (self.SAMPLING_INT - self.EPSILON))
-      )
+    # Get the true sampling interval between the samples to identify gaps
+    differences = np.diff(timestamps)
 
-      # Add one to split on the correct sample since np.diff reduced the index by one
-      indices += 1
+    # Check whether the sampling interval is within a tolerance: otherwise we create a reference
+    # to the index where the gap is. We will use these indices to create individual traces.
+    indices = np.flatnonzero(
+      (differences > (self.SAMPLING_INT + self.EPSILON)) |
+      (differences < (self.SAMPLING_INT - self.EPSILON))
+    )
 
-      # Add final index because the final trace ends there..
-      return np.append(indices, len(timestamps))
+    # Add one to split on the correct sample since np.diff reduced the index by one
+    indices += 1
+
+    # Add final index because the final trace ends there..
+    return np.append(indices, len(timestamps))
 
 
   def add_stream(self, files, df, name):
 
-      """
-      def AQG2MSEED.add_stream
-      Adds a stream (channel) to the output
-      """
+    """
+    def AQG2MSEED.add_stream
+    Adds a stream (channel) to the output
+    """
 
-      # Reference the timestamp for convenience 
-      timestamps = df["timestamp (s)"].astype("float64")
+    # Reference the timestamp for convenience 
+    timestamps = df["timestamp (s)"].astype("float64")
  
-      indices = self.get_continuous_traces(timestamps)
+    indices = self.get_continuous_traces(timestamps)
 
-      # Create an empty ObsPy stream to collect all traces
-      stream = obspy.Stream()
+    # Create an empty ObsPy stream to collect all traces
+    stream = obspy.Stream()
 
-      # Map the requested data file
-      (gain, column, channel) = self.map_name(name)
+    # Map the requested data file
+    (gain, channel) = self.map_name(name)
  
-      # Define the mSEED header
-      # Sampling rate should be rounded to 6 decimals.. floating point issues
-      header = self.get_header(None, channel)
+    # Define the mSEED header
+    # Sampling rate should be rounded to 6 decimals.. floating point issues
+    header = self.get_header(None, channel)
 
-      # Reference the data and convert to int64 for storage. mSEED cannot store long long (64-bit) integers.
-      # Can we think of a clever trick? STEIM2 compression (factor 3) is available for integers.
-      data = np.array(gain * df[column], dtype="int64")
+    # Reference the data and convert to int64 for storage. mSEED cannot store long long (64-bit) integers.
+    # Can we think of a clever trick? STEIM2 compression (factor 3) is available for integers.
+    data = np.array(gain * df[name], dtype="int64")
 
-      # Special handling for gravity
-      if name == "gravity":
+    # Special handling for gravity
+    if channel == "MGZ":
 
-        # All sorts of corrections
-        if True:
-          self.correct_data(df, data)
+      # All sorts of corrections
+      if True:
+        self.correct_data(df, data)
 
-        # Subtract an offset to keep values in 32-bit range
-        data -= self.GRAV_OFFSET
+      # Subtract an offset to keep values in 32-bit range
+      data -= self.GRAV_OFFSET
 
-      # Here we start collecting the pandas data frame in to continuous traces without gaps
-      # The index of the first trace is naturally 0
-      start = 0
+    # Here we start collecting the pandas data frame in to continuous traces without gaps
+    # The index of the first trace is naturally 0
+    start = 0
 
-      # Go over the collected indices where there is a gap!
-      for end in list(indices):
+    # Go over the collected indices where there is a gap!
+    for end in list(indices):
 
-        # Alert client of the gap size
-        print("Found gap in data outside of tolerance of length.")
+      # Alert client of the gap size
+      print("Found gap in data outside of tolerance of length.")
 
-        self.add_trace(stream, timestamps, data, start, end, channel)
+      self.add_trace(stream, timestamps, data, start, end, channel)
 
-        # Set the start to the end of the previous trace and proceed with the next trace
-        start = end
+      # Set the start to the end of the previous trace and proceed with the next trace
+      start = end
 
-      # Add to the file collection
-      self.to_files(files, channel, stream)
+    # Add to the file collection
+    self.to_files(files, channel, stream)
 
 
   def convert(self, filename, names):
@@ -266,11 +272,12 @@ class AQG2MSEED():
     # Read the supplied AQG datafile to a pandas dataframe
     try:
       df = pd.read_csv(filename, parse_dates=[0])
-    except pd.errors.ParserError:
+    except Exception:
       return files
   
     # Go over all the requested channels
     for name in names:
-      self.add_stream(files, df, name)
+      if name in df:
+        self.add_stream(files, df, name)
 
     return files

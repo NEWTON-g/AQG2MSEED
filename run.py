@@ -11,14 +11,14 @@ if __name__ == "__main__":
 
   # Columns to write to mSEED: each will be a channel
   columns = [
-    "gravity",
-    "atmospheric_pressure",
-    "sensor_head_temperature",
-    "vacuum_chamber_temperature",
-    "tiltmeter_temperature",
-    "external_temperature",
-    "x_tilt",
-    "y_tilt"
+    "raw vertical gravity (nm/s^2)",
+    #"atmospheric pressure (hPa)"
+    #"sensor head temperature (°C)",
+    #"vacuum chamber temperature (°C)",
+    #"tiltmeter temperature (°C)",
+    #"external temperature (°C)",
+    #"X tilt (mrad)",
+    #"Y tilt (mrad)"
   ]
 
   # These are the SEED network, station identifiers. Location remains blank.
