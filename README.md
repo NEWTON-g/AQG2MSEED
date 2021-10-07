@@ -3,11 +3,11 @@
 This script loads raw AQG data files and converts them to the seismological mSEED standard.
 
 ## Usage
-Modify the input file in the `run.py` script. An example AQG input file is given: `capture_20200826_170834_raw_13.csv` that is written to `2Q.AQG..MGZ.D.2021.215`.
+Modify the input file in the `run.py` script and feed the `AQG2MSEED` convertor with a AQG file.
 
 ## Specifics
 
-The sampling rate of the AQG is exactly 540ms but the computer clock may provide slightly different timestams. We assume that the sampling rate is precise, introducing some misfit between the converted and raw data (fig. clockdrift.png). Data is split into continuous segments that are often bounded by recalibration pauses of the instrument every two hours. Each gap introduces a new data segment with a new start time. The traces are bundled in a stream and written to a mSEED file using ObsPy.
+The sampling rate of the AQG is exactly 540ms but the computer clock may provide slightly different timestams. We assume that the sampling rate is precise, introducing some misfit between the converted and raw data. Data is split into continuous segments that are often bounded by recalibration pauses of the instrument every two hours. Each gap introduces a new data segment with a new start time. The traces are bundled in a stream and written to a mSEED file using ObsPy.
 
 ## Naming
 

@@ -1,8 +1,6 @@
 __pycache__
-all.py
-show.py
+test
 .DS_STORE
 *.swp
-test.py
 mseed/*
 data/*
