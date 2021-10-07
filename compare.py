@@ -7,9 +7,9 @@ plt.style.use("seaborn")
 
 OFFSET = 9793798890
 
-st = read("mseed/MGZ.D/*")
+st = read("mseed/MGZ.Q/*")
 
-df = pd.read_csv("./data/capture_20210803_140132_raw_0.csv")
+df = pd.read_csv("./data/capture_20210616_154156_raw_19.csv")
 
 plt.plot(df["timestamp (s)"], df["raw vertical gravity (nm/s^2)"], label="AQG", color="green")
 

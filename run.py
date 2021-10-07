@@ -6,19 +6,20 @@ if __name__ == "__main__":
 
   """
   Script to convert AQG gravimeter data to mSEED using ObsPy
-  Author: Mathijs Koymans, 2020
+  Author: Mathijs Koymans, 2021
   """
 
   # Columns to write to mSEED: each will be a channel
   columns = [
     "raw vertical gravity (nm/s^2)",
-    #"atmospheric pressure (hPa)"
-    #"sensor head temperature (°C)",
-    #"vacuum chamber temperature (°C)",
-    #"tiltmeter temperature (°C)",
-    #"external temperature (°C)",
-    #"X tilt (mrad)",
-    #"Y tilt (mrad)"
+    "delta_g_earth_tide (nm/s^2)", # This includes ocean loading & polar motion
+    "atmospheric pressure (hPa)"
+    "sensor head temperature (°C)",
+    "vacuum chamber temperature (°C)",
+    "tiltmeter temperature (°C)",
+    "external temperature (°C)",
+    "X tilt (mrad)",
+    "Y tilt (mrad)"
   ]
 
   # These are the SEED network, station identifiers. Location remains blank.

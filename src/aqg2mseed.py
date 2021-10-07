@@ -49,7 +49,7 @@ class AQG2MSEED():
       "location": self.location,
       "channel": channel,
       "mseed": {"dataquality": self.QUALITY},
-      "sampling_rate": np.round(1. / self.SAMPLING_INT, decimals=9)
+      "sampling_rate": np.round(1. / self.SAMPLING_INT, decimals=8)
     })
 
 
@@ -72,6 +72,10 @@ class AQG2MSEED():
     # Pressure codes
     elif name == "atmospheric pressure (hPa)":
       return (1E3, "MDO")
+
+    # Tides
+    elif name == "delta_g_earth_tide (nm/s^2)":
+      return (1E0, "MXZ")
   
     # Temperature codes
     elif name == "sensor head temperature (°C)":
@@ -100,8 +104,10 @@ class AQG2MSEED():
     Adds a trace to the passed stream based on the start and end incides
     """
 
+    # Cut off the right slice
     samples = data[start:end].astype("int32")
 
+    # mSEED record header
     header = self.get_header(obspy.UTCDateTime(timestamps[start]), channel)
     trace = obspy.Trace(samples, header=header)
 
@@ -118,6 +124,21 @@ class AQG2MSEED():
 
     stream.append(trace)
 
+    # Return simple checksum
+    return np.bitwise_xor.reduce(samples)
+
+
+  def get_tide(self, df):
+
+    """
+    def AQG2MSEED.get_tide
+    Returns the contribution of all tidal corrections (ocean loading, polar motion, solid earth)
+    """
+
+    return np.array(df["delta_g_earth_tide (nm/s^2)"], dtype="int64") + \
+           np.array(df["delta_g_ocean_loading (nm/s^2)"], dtype="int64") + \
+           np.array(df["delta_g_polar (nm/s^2)"], dtype="int64")
+
 
   def correct_data(self, df, data):
 
@@ -128,11 +149,9 @@ class AQG2MSEED():
 
     # Apply all these corrections
     # We avoid these corrections: delta_g_earth_tide (nm/s^2), delta_g_ocean_loading (nm/s^2) , delta_g_polar (nm/s^2)
+    # These are kept in a different MXZ channel if research want them (or calculate themselves)
     for correction in ("delta_g_quartz (nm/s^2)",
                        "delta_g_tilt (nm/s^2)",
-                       "delta_g_earth_tide (nm/s^2)",
-                       "delta_g_ocean_loading (nm/s^2)",
-                       "delta_g_polar (nm/s^2)",
                        "delta_g_pressure (nm/s^2)",
                        "delta_g_syst (nm/s^2)",
                        "delta_g_height (nm/s^2)",
@@ -220,27 +239,28 @@ class AQG2MSEED():
     # Map the requested data file
     (gain, channel) = self.map_name(name)
  
-    # Define the mSEED header
-    # Sampling rate should be rounded to 6 decimals.. floating point issues
-    header = self.get_header(None, channel)
+    # Tide channel
+    if channel == "MXZ":
+      data = self.get_tide(df)
 
-    # Reference the data and convert to int64 for storage. mSEED cannot store long long (64-bit) integers.
-    # Can we think of a clever trick? STEIM2 compression (factor 3) is available for integers.
-    data = np.array(gain * df[name], dtype="int64")
+    else:
+      # Fetch the data
+      data = np.array(gain * df[name], dtype="int64")
 
-    # Special handling for gravity
-    if channel == "MGZ":
+      # Special handling for gravity
+      if channel == "MGZ":
 
-      # All sorts of corrections
-      if True:
-        self.correct_data(df, data)
+        # All sorts of corrections
+        if True:
+          self.correct_data(df, data)
 
-      # Subtract an offset to keep values in 32-bit range
-      data -= self.GRAV_OFFSET
+        # Subtract an offset to keep values in 32-bit range
+        data -= self.GRAV_OFFSET
 
     # Here we start collecting the pandas data frame in to continuous traces without gaps
     # The index of the first trace is naturally 0
     start = 0
+    checksum = np.bitwise_xor.reduce(data)
 
     # Go over the collected indices where there is a gap!
     for end in list(indices):
@@ -248,10 +268,14 @@ class AQG2MSEED():
       # Alert client of the gap size
       print("Found gap in data outside of tolerance of length.")
 
-      self.add_trace(stream, timestamps, data, start, end, channel)
+      # Bitwise xor to bring checksum back to 0
+      checksum ^= self.add_trace(stream, timestamps, data, start, end, channel)
 
       # Set the start to the end of the previous trace and proceed with the next trace
       start = end
+
+    if checksum != 0:
+      raise AssertionError("Data checksum is invalid. Not all samples were written.")
 
     # Add to the file collection
     self.to_files(files, channel, stream)

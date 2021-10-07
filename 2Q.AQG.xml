@@ -368,6 +368,49 @@
         </Response>
       </Channel>
 
+      <!-- Ocean Tide / Ocean Loading / Polar Motion Channel -->
+      <!-- This channel includes these corrections that can be made to the data (or calculate them yourself) -->
+      <Channel code="MXZ" startDate="2020-07-01T00:00:00" restrictedStatus="closed" locationCode="">
+        <Latitude>37.765890</Latitude>
+        <Longitude>15.016805</Longitude>
+        <Elevation>2920</Elevation>
+        <Depth>0</Depth>
+        <Azimuth>0</Azimuth>
+        <Dip>-90</Dip>
+        <SampleRate>2</SampleRate>
+        <SampleRateRatio>
+          <NumberSamples>2</NumberSamples>
+          <NumberSeconds>1</NumberSeconds>
+        </SampleRateRatio>
+        <ClockDrift>0</ClockDrift>
+        <Sensor>
+          <Type>AQG-1</Type>
+          <Description>MUQUANS ABSOLUTE QUANTUM GRAVIMETER</Description>
+          <Model>AQG-1</Model>
+        </Sensor>
+        <DataLogger>
+          <Description></Description>
+        </DataLogger>
+        <Response>
+          <InstrumentSensitivity>
+            <Value>1</Value>
+            <Frequency>0</Frequency>
+            <InputUnits>
+              <Name>NM/S^2</Name>
+            </InputUnits>
+            <OutputUnits>
+              <Name>COUNTS</Name>
+            </OutputUnits>
+          </InstrumentSensitivity>
+          <Stage number="1">
+            <StageGain>
+              <Value>1</Value>
+              <Frequency>0</Frequency>
+            </StageGain>
+          </Stage>
+        </Response>
+      </Channel>
+
     </Station>
   </Network>
 </FDSNStationXML>
