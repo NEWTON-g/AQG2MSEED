@@ -17,7 +17,6 @@ class AQG2MSEED():
   EPSILON = 0.01
 
   # Offset to be able to use STEIM2 effectively (which is unfortunately limited to 32-bit differences)
-  GRAV_OFFSET = 9793798890
   QUALITY = "D"
 
 
@@ -105,7 +104,7 @@ class AQG2MSEED():
     """
 
     # Cut off the right slice
-    samples = data[start:end].astype("int32")
+    samples = data[start:end]
 
     # mSEED record header
     header = self.get_header(obspy.UTCDateTime(timestamps[start]), channel)
@@ -124,8 +123,7 @@ class AQG2MSEED():
 
     stream.append(trace)
 
-    # Return simple checksum
-    return np.bitwise_xor.reduce(samples)
+    return stream
 
 
   def get_tide(self, df):
@@ -135,9 +133,9 @@ class AQG2MSEED():
     Returns the contribution of all tidal corrections (ocean loading, polar motion, solid earth)
     """
 
-    return np.array(df["delta_g_earth_tide (nm/s^2)"], dtype="int64") + \
-           np.array(df["delta_g_ocean_loading (nm/s^2)"], dtype="int64") + \
-           np.array(df["delta_g_polar (nm/s^2)"], dtype="int64")
+    return np.array(df["delta_g_earth_tide (nm/s^2)"], dtype="float64") + \
+           np.array(df["delta_g_ocean_loading (nm/s^2)"], dtype="float64") + \
+           np.array(df["delta_g_polar (nm/s^2)"], dtype="float64")
 
 
   def correct_data(self, df, data):
@@ -156,7 +154,7 @@ class AQG2MSEED():
                        "delta_g_syst (nm/s^2)",
                        "delta_g_height (nm/s^2)",
                        "delta_g_laser_polarization (nm/s^2)"):
-      data -= np.array(df[correction], dtype="int64")
+      data -= np.array(df[correction], dtype="float64")
 
 
   def to_files(self, files, channel, stream):
@@ -245,7 +243,7 @@ class AQG2MSEED():
 
     else:
       # Fetch the data
-      data = np.array(gain * df[name], dtype="int64")
+      data = np.array(gain * df[name], dtype="float64")
 
       # Special handling for gravity
       if channel == "MGZ":
@@ -254,13 +252,9 @@ class AQG2MSEED():
         if True:
           self.correct_data(df, data)
 
-        # Subtract an offset to keep values in 32-bit range
-        data -= self.GRAV_OFFSET
-
     # Here we start collecting the pandas data frame in to continuous traces without gaps
     # The index of the first trace is naturally 0
     start = 0
-    checksum = np.bitwise_xor.reduce(data)
 
     # Go over the collected indices where there is a gap!
     for end in list(indices):
@@ -268,14 +262,11 @@ class AQG2MSEED():
       # Alert client of the gap size
       print("Found gap in data outside of tolerance of length.")
 
-      # Bitwise xor to bring checksum back to 0
-      checksum ^= self.add_trace(stream, timestamps, data, start, end, channel)
+      # Add the trace
+      self.add_trace(stream, timestamps, data, start, end, channel)
 
       # Set the start to the end of the previous trace and proceed with the next trace
       start = end
-
-    if checksum != 0:
-      raise AssertionError("Data checksum is invalid. Not all samples were written.")
 
     # Add to the file collection
     self.to_files(files, channel, stream)

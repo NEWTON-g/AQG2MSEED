@@ -6,7 +6,7 @@ if __name__ == "__main__":
 
   """
   Script to convert AQG gravimeter data to mSEED using ObsPy
-  Author: Mathijs Koymans, 2021
+  Author: Mathijs Koymans, 2022
   """
 
   # Columns to write to mSEED: each will be a channel

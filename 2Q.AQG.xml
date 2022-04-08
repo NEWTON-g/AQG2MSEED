@@ -17,9 +17,6 @@
 
       <!-- Gravity Channel -->
       <Channel code="MGZ" startDate="2020-07-01T00:00:00" restrictedStatus="closed" locationCode="">
-        <Comment>
-          <Value>The gravity value of this channel is expressed relative to the exact absolute value of 9.793798890 m/s^2.</Value>
-        </Comment>
         <Latitude>37.765890</Latitude>
         <Longitude>15.016805</Longitude>
         <Elevation>2920</Elevation>
