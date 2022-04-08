@@ -292,6 +292,7 @@ class AQG2MSEED():
   
     # Go over all the requested channels
     for name in names:
+      print(name)
       if name in df:
         self.add_stream(files, df, name)
 

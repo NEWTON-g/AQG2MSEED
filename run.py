@@ -13,7 +13,7 @@ if __name__ == "__main__":
   columns = [
     "raw vertical gravity (nm/s^2)",
     "delta_g_earth_tide (nm/s^2)", # This includes ocean loading & polar motion
-    "atmospheric pressure (hPa)"
+    "atmospheric pressure (hPa)",
     "sensor head temperature (°C)",
     "vacuum chamber temperature (°C)",
     "tiltmeter temperature (°C)",
