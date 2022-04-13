@@ -237,13 +237,15 @@ class AQG2MSEED():
     # Map the requested data file
     (gain, channel) = self.map_name(name)
  
+    # Data typpe to float64 for MGZ (too large for int32)
+    dtype = "float64" if channel in ["MGZ", "MGX"] else "int32"
+
     # Tide channel
     if channel == "MXZ":
       data = self.get_tide(df)
-
     else:
       # Fetch the data
-      data = np.array(gain * df[name], dtype="float64")
+      data = np.array(gain * df[name], dtype=dtype)
 
       # Special handling for gravity
       if channel == "MGZ":
@@ -286,7 +288,7 @@ class AQG2MSEED():
 
     # Read the supplied AQG datafile to a pandas dataframe
     try:
-      df = pd.read_csv(filename, parse_dates=[0])
+      df = pd.read_csv(filename, parse_dates=[0], float_precision="round_trip")
     except Exception:
       return files
   

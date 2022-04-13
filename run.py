@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
   # Columns to write to mSEED: each will be a channel
   columns = [
-    "raw vertical gravity (nm/s^2)",
+    "raw vertical gravity (nm/s^2)", # This is corrected for some effects (e.g., thermal, pressure) but NOT tides!
     "delta_g_earth_tide (nm/s^2)", # This includes ocean loading & polar motion
     "atmospheric pressure (hPa)",
     "sensor head temperature (°C)",

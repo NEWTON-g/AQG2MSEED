@@ -3,9 +3,9 @@
   <Source>NEWTON-g Consortium</Source>
   <Sender>NEWTON-g</Sender>
   <Created>2020-07-10T09:17:46</Created>
-  <Network code="2Q" startDate="2020-07-01T00:00:00" restrictedStatus="closed">
-    <Description>Netherlands Seismic and Acoustic Network</Description>
-    <Station code="AQG" startDate="2020-07-01T00:00:00" restrictedStatus="closed">
+  <Network code="2Q" startDate="2020-07-01T00:00:00" restrictedStatus="open">
+    <Description>Absolute Quantum Gravimeter from the NEWTON-g Gravity Imager</Description>
+    <Station code="AQG" startDate="2020-07-01T00:00:00" restrictedStatus="open">
       <Latitude>37.765890</Latitude>
       <Longitude>15.016805</Longitude>
       <Elevation>2920</Elevation>
@@ -13,20 +13,20 @@
         <Name>Pizzi Deneri, Volcanological Observatory (PDN)</Name>
         <Country>Italy</Country>
       </Site>
-      <CreationDate>2001-06-06T00:00:00</CreationDate>
+      <CreationDate>2020-07-01T00:00:00</CreationDate>
 
       <!-- Gravity Channel -->
-      <Channel code="MGZ" startDate="2020-07-01T00:00:00" restrictedStatus="closed" locationCode="">
+      <Channel code="MGZ" startDate="2020-07-01T00:00:00" restrictedStatus="open" locationCode="">
         <Latitude>37.765890</Latitude>
         <Longitude>15.016805</Longitude>
         <Elevation>2920</Elevation>
         <Depth>0</Depth>
         <Azimuth>0</Azimuth>
         <Dip>-90</Dip>
-        <SampleRate>2</SampleRate>
+        <SampleRate>1.85</SampleRate>
         <SampleRateRatio>
-          <NumberSamples>2</NumberSamples>
-          <NumberSeconds>1</NumberSeconds>
+          <NumberSamples>100</NumberSamples>
+          <NumberSeconds>54</NumberSeconds>
         </SampleRateRatio>
         <ClockDrift>0</ClockDrift>
         <Sensor>
@@ -39,36 +39,36 @@
         </DataLogger>
         <Response>
           <InstrumentSensitivity>
-            <Value>1E9</Value>
-            <Frequency>1</Frequency>
+            <Value>1</Value>
+            <Frequency>0</Frequency>
             <InputUnits>
               <Name>M/S**2</Name>
             </InputUnits>
             <OutputUnits>
-              <Name>NM/S**2</Name>
+              <Name>M/S**2</Name>
             </OutputUnits>
           </InstrumentSensitivity>
           <Stage number="1">
             <StageGain>
-              <Value>1E9</Value>
-              <Frequency>1</Frequency>
+              <Value>1</Value>
+              <Frequency>0</Frequency>
             </StageGain>
           </Stage>
         </Response>
       </Channel>
 
-      <!-- Pressure Channel -->
-      <Channel code="MDO" startDate="2020-07-01T00:00:00" restrictedStatus="closed" locationCode="">
+      <!-- Pressure Channel (hPa) -->
+      <Channel code="MDO" startDate="2020-07-01T00:00:00" restrictedStatus="open" locationCode="">
         <Latitude>37.765890</Latitude>
         <Longitude>15.016805</Longitude>
         <Elevation>2920</Elevation>
         <Depth>0</Depth>
         <Azimuth>0</Azimuth>
         <Dip>-90</Dip>
-        <SampleRate>2</SampleRate>
+        <SampleRate>1.85</SampleRate>
         <SampleRateRatio>
-          <NumberSamples>2</NumberSamples>
-          <NumberSeconds>1</NumberSeconds>
+          <NumberSamples>100</NumberSamples>
+          <NumberSeconds>54</NumberSeconds>
         </SampleRateRatio>
         <ClockDrift>0</ClockDrift>
         <Sensor>
@@ -81,11 +81,11 @@
         </DataLogger>
         <Response>
           <InstrumentSensitivity>
-            <Value>1E5</Value>
-            <Frequency>1</Frequency>
+            <Value>1E3</Value>
+            <Frequency>0</Frequency>
             <InputUnits>
-              <Name>PA</Name>
-              <Description>PRESSURE IN PASCAL</Description>
+              <Name>HPA</Name>
+              <Description>PRESSURE IN HECTOPASCAL</Description>
             </InputUnits>
             <OutputUnits>
               <Name>COUNTS</Name>
@@ -94,25 +94,25 @@
           </InstrumentSensitivity>
           <Stage number="1">
             <StageGain>
-              <Value>1E5</Value>
-              <Frequency>1</Frequency>
+              <Value>1E3</Value>
+              <Frequency>0</Frequency>
             </StageGain>
           </Stage>
         </Response>
       </Channel>
 
       <!-- Sensor Head Temperature Channel -->
-      <Channel code="MK1" startDate="2020-07-01T00:00:00" restrictedStatus="closed" locationCode="">
+      <Channel code="MK1" startDate="2020-07-01T00:00:00" restrictedStatus="open" locationCode="">
         <Latitude>37.765890</Latitude>
         <Longitude>15.016805</Longitude>
         <Elevation>2920</Elevation>
         <Depth>0</Depth>
         <Azimuth>0</Azimuth>
         <Dip>-90</Dip>
-        <SampleRate>2</SampleRate>
+        <SampleRate>1.85</SampleRate>
         <SampleRateRatio>
-          <NumberSamples>2</NumberSamples>
-          <NumberSeconds>1</NumberSeconds>
+          <NumberSamples>100</NumberSamples>
+          <NumberSeconds>54</NumberSeconds>
         </SampleRateRatio>
         <ClockDrift>0</ClockDrift>
         <Sensor>
@@ -146,17 +146,17 @@
       </Channel>
 
       <!-- Sensor Head Temperature Channel -->
-      <Channel code="MK2" startDate="2020-07-01T00:00:00" restrictedStatus="closed" locationCode="">
+      <Channel code="MK2" startDate="2020-07-01T00:00:00" restrictedStatus="open" locationCode="">
         <Latitude>37.765890</Latitude>
         <Longitude>15.016805</Longitude>
         <Elevation>2920</Elevation>
         <Depth>0</Depth>
         <Azimuth>0</Azimuth>
         <Dip>-90</Dip>
-        <SampleRate>2</SampleRate>
+        <SampleRate>1.85</SampleRate>
         <SampleRateRatio>
-          <NumberSamples>2</NumberSamples>
-          <NumberSeconds>1</NumberSeconds>
+          <NumberSamples>100</NumberSamples>
+          <NumberSeconds>54</NumberSeconds>
         </SampleRateRatio>
         <ClockDrift>0</ClockDrift>
         <Sensor>
@@ -190,17 +190,17 @@
       </Channel>
 
       <!-- Sensor Head Temperature Channel -->
-      <Channel code="MK3" startDate="2020-07-01T00:00:00" restrictedStatus="closed" locationCode="">
+      <Channel code="MK3" startDate="2020-07-01T00:00:00" restrictedStatus="open" locationCode="">
         <Latitude>37.765890</Latitude>
         <Longitude>15.016805</Longitude>
         <Elevation>2920</Elevation>
         <Depth>0</Depth>
         <Azimuth>0</Azimuth>
         <Dip>-90</Dip>
-        <SampleRate>2</SampleRate>
+        <SampleRate>1.85</SampleRate>
         <SampleRateRatio>
-          <NumberSamples>2</NumberSamples>
-          <NumberSeconds>1</NumberSeconds>
+          <NumberSamples>100</NumberSamples>
+          <NumberSeconds>54</NumberSeconds>
         </SampleRateRatio>
         <ClockDrift>0</ClockDrift>
         <Sensor>
@@ -234,17 +234,17 @@
       </Channel>
 
       <!-- External Temperature Channel -->
-      <Channel code="MK4" startDate="2020-07-01T00:00:00" restrictedStatus="closed" locationCode="">
+      <Channel code="MK4" startDate="2020-07-01T00:00:00" restrictedStatus="open" locationCode="">
         <Latitude>37.765890</Latitude>
         <Longitude>15.016805</Longitude>
         <Elevation>2920</Elevation>
         <Depth>0</Depth>
         <Azimuth>0</Azimuth>
         <Dip>-90</Dip>
-        <SampleRate>2</SampleRate>
+        <SampleRate>1.85</SampleRate>
         <SampleRateRatio>
-          <NumberSamples>2</NumberSamples>
-          <NumberSeconds>1</NumberSeconds>
+          <NumberSamples>100</NumberSamples>
+          <NumberSeconds>54</NumberSeconds>
         </SampleRateRatio>
         <ClockDrift>0</ClockDrift>
         <Sensor>
@@ -278,17 +278,17 @@
       </Channel>
 
       <!-- Tilt X Channel -->
-      <Channel code="MA1" startDate="2020-07-01T00:00:00" restrictedStatus="closed" locationCode="">
+      <Channel code="MA1" startDate="2020-07-01T00:00:00" restrictedStatus="open" locationCode="">
         <Latitude>37.765890</Latitude>
         <Longitude>15.016805</Longitude>
         <Elevation>2920</Elevation>
         <Depth>0</Depth>
         <Azimuth>0</Azimuth>
         <Dip>-90</Dip>
-        <SampleRate>2</SampleRate>
+        <SampleRate>1.85</SampleRate>
         <SampleRateRatio>
-          <NumberSamples>2</NumberSamples>
-          <NumberSeconds>1</NumberSeconds>
+          <NumberSamples>100</NumberSamples>
+          <NumberSeconds>54</NumberSeconds>
         </SampleRateRatio>
         <ClockDrift>0</ClockDrift>
         <Sensor>
@@ -301,11 +301,11 @@
         </DataLogger>
         <Response>
           <InstrumentSensitivity>
-            <Value>1E6</Value>
+            <Value>1E3</Value>
             <Frequency>0</Frequency>
             <InputUnits>
-              <Name>RAD</Name>
-              <Description>TILT IN RADIANS</Description>
+              <Name>MRAD</Name>
+              <Description>TILT IN MILLIRADIANS</Description>
             </InputUnits>
             <OutputUnits>
               <Name>COUNTS</Name>
@@ -322,17 +322,17 @@
       </Channel>
 
       <!-- Tilt Y Channel -->
-      <Channel code="MA2" startDate="2020-07-01T00:00:00" restrictedStatus="closed" locationCode="">
+      <Channel code="MA2" startDate="2020-07-01T00:00:00" restrictedStatus="open" locationCode="">
         <Latitude>37.765890</Latitude>
         <Longitude>15.016805</Longitude>
         <Elevation>2920</Elevation>
         <Depth>0</Depth>
         <Azimuth>0</Azimuth>
         <Dip>-90</Dip>
-        <SampleRate>2</SampleRate>
+        <SampleRate>1.85</SampleRate>
         <SampleRateRatio>
-          <NumberSamples>2</NumberSamples>
-          <NumberSeconds>1</NumberSeconds>
+          <NumberSamples>100</NumberSamples>
+          <NumberSeconds>54</NumberSeconds>
         </SampleRateRatio>
         <ClockDrift>0</ClockDrift>
         <Sensor>
@@ -345,11 +345,11 @@
         </DataLogger> 
         <Response>
           <InstrumentSensitivity>
-            <Value>1E6</Value>
+            <Value>1E3</Value>
             <Frequency>0</Frequency>
             <InputUnits>
               <Name>MRAD</Name>
-              <Description>TILT IN RADIANS</Description>
+              <Description>TILT IN MILLIRADIANS</Description>
             </InputUnits>
             <OutputUnits>
               <Name>COUNTS</Name>
@@ -358,7 +358,7 @@
           </InstrumentSensitivity>
           <Stage number="1">
             <StageGain>
-              <Value>1E6</Value>
+              <Value>1E3</Value>
               <Frequency>0</Frequency>
             </StageGain>
           </Stage>
@@ -367,17 +367,17 @@
 
       <!-- Ocean Tide / Ocean Loading / Polar Motion Channel -->
       <!-- This channel includes these corrections that can be made to the data (or calculate them yourself) -->
-      <Channel code="MXZ" startDate="2020-07-01T00:00:00" restrictedStatus="closed" locationCode="">
+      <Channel code="MXZ" startDate="2020-07-01T00:00:00" restrictedStatus="open" locationCode="">
         <Latitude>37.765890</Latitude>
         <Longitude>15.016805</Longitude>
         <Elevation>2920</Elevation>
         <Depth>0</Depth>
         <Azimuth>0</Azimuth>
         <Dip>-90</Dip>
-        <SampleRate>2</SampleRate>
+        <SampleRate>1.85</SampleRate>
         <SampleRateRatio>
-          <NumberSamples>2</NumberSamples>
-          <NumberSeconds>1</NumberSeconds>
+          <NumberSamples>100</NumberSamples>
+          <NumberSeconds>54</NumberSeconds>
         </SampleRateRatio>
         <ClockDrift>0</ClockDrift>
         <Sensor>
@@ -393,10 +393,10 @@
             <Value>1</Value>
             <Frequency>0</Frequency>
             <InputUnits>
-              <Name>NM/S^2</Name>
+              <Name>M/S**2</Name>
             </InputUnits>
             <OutputUnits>
-              <Name>COUNTS</Name>
+              <Name>M/S**2</Name>
             </OutputUnits>
           </InstrumentSensitivity>
           <Stage number="1">
