@@ -67,14 +67,14 @@ class AQG2MSEED():
   
     # Gravity codes: quality code will be different
     if name == "raw vertical gravity (nm/s^2)":
-      return (1E0, "MGZ")
+      return (1E-9, "MGZ")
+    # Tide
+    elif name == "delta_g_earth_tide (nm/s^2)":
+      return (1E-9, "MXZ")
+
     # Pressure codes
     elif name == "atmospheric pressure (hPa)":
       return (1E3, "MDO")
-
-    # Tides
-    elif name == "delta_g_earth_tide (nm/s^2)":
-      return (1E0, "MXZ")
   
     # Temperature codes
     elif name == "sensor head temperature (°C)":
@@ -138,7 +138,7 @@ class AQG2MSEED():
            np.array(df["delta_g_polar (nm/s^2)"], dtype="float64")
 
 
-  def correct_data(self, df, data):
+  def correct_data(self, df, gain, data):
 
     """
     def AQG2MSEED.correct_data
@@ -154,7 +154,7 @@ class AQG2MSEED():
                        "delta_g_syst (nm/s^2)",
                        "delta_g_height (nm/s^2)",
                        "delta_g_laser_polarization (nm/s^2)"):
-      data -= np.array(df[correction], dtype="float64")
+      data -= gain * np.array(df[correction], dtype="float64")
 
 
   def to_files(self, files, channel, stream):
@@ -242,7 +242,7 @@ class AQG2MSEED():
 
     # Tide channel
     if channel == "MXZ":
-      data = self.get_tide(df)
+      data = gain * self.get_tide(df)
     else:
       # Fetch the data
       data = np.array(gain * df[name], dtype=dtype)
@@ -252,7 +252,7 @@ class AQG2MSEED():
 
         # All sorts of corrections
         if True:
-          self.correct_data(df, data)
+          self.correct_data(df, gain, data)
 
     # Here we start collecting the pandas data frame in to continuous traces without gaps
     # The index of the first trace is naturally 0

@@ -40,7 +40,7 @@
         <Response>
           <InstrumentSensitivity>
             <Value>1</Value>
-            <Frequency>0</Frequency>
+            <Frequency>1</Frequency>
             <InputUnits>
               <Name>M/S**2</Name>
             </InputUnits>
@@ -51,7 +51,7 @@
           <Stage number="1">
             <StageGain>
               <Value>1</Value>
-              <Frequency>0</Frequency>
+              <Frequency>1</Frequency>
             </StageGain>
           </Stage>
         </Response>
@@ -367,6 +367,7 @@
 
       <!-- Ocean Tide / Ocean Loading / Polar Motion Channel -->
       <!-- This channel includes these corrections that can be made to the data (or calculate them yourself) -->
+      <!-- It is the EFFECT not the CORRECTION so subtract this channel from the raw gravity -->
       <Channel code="MXZ" startDate="2020-07-01T00:00:00" restrictedStatus="open" locationCode="">
         <Latitude>37.765890</Latitude>
         <Longitude>15.016805</Longitude>
@@ -391,7 +392,7 @@
         <Response>
           <InstrumentSensitivity>
             <Value>1</Value>
-            <Frequency>0</Frequency>
+            <Frequency>1</Frequency>
             <InputUnits>
               <Name>M/S**2</Name>
             </InputUnits>
@@ -402,7 +403,7 @@
           <Stage number="1">
             <StageGain>
               <Value>1</Value>
-              <Frequency>0</Frequency>
+              <Frequency>1</Frequency>
             </StageGain>
           </Stage>
         </Response>
